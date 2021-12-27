@@ -4,7 +4,7 @@
   "description": "Backend of my personal project to help rookies get code reviews from senior developers",
   "main": "app.js",
   "scripts": {
-    "start": "npx nodemon app.js",
+    "start": "node app",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "decepti0n",
