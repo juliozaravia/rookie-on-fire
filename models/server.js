@@ -15,6 +15,7 @@ class Server {
 
   middlewares() {
     this.app.use(cors());
+    this.app.use(express.json());
     this.app.use(express.static('public'));
   }
 
@@ -23,9 +24,7 @@ class Server {
   }
 
   listen() {
-    this.app.listen(this.port, () => {
-      console.log(`Server running on port ${this.port}`);
-    });
+    this.app.listen(this.port);
   }
 }
 

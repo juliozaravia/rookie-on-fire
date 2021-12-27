@@ -1,20 +1,31 @@
-const { response } = require('express');
+const { request, response } = require('express');
 
-const getUsers = (req, res = response) => {
+const getUsers = (req = request, res = response) => {
+  const { lorem, ipsum } = req.query;
+
   res.json({
-    msg: 'get API'
+    msg: 'get API',
+    lorem,
+    ipsum
   });
 };
 
 const createUsers = (req, res = response) => {
+  const { lorem, ipsum } = req.body;
+
   res.json({
-    msg: 'create API'
+    msg: 'create API',
+    lorem,
+    ipsum
   });
 };
 
 const editUsers = (req, res = response) => {
+  const { id } = req.params;
+
   res.json({
-    msg: 'edit API'
+    msg: 'edit API',
+    id
   });
 };
 
