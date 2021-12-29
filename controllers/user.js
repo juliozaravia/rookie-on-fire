@@ -1,43 +1,61 @@
-const { request, response } = require('express');
+const { request, response } = require('express')
+const bcryptjs = require('bcryptjs')
 
-const getUsers = (req = request, res = response) => {
-  const { lorem, ipsum } = req.query;
+const User = require('../models/user')
 
-  res.json({
-    msg: 'get API',
-    lorem,
-    ipsum
-  });
-};
+const getUsers = async (req = request, res = response) => {
+  // TODO: Validate that limit and from are transformable to numbers by Number foo
+  const { limit = 2, from = 0 } = req.query
+  const usersQuery = User.find({ status: true })
+    .skip(Number(from))
+    .limit(Number(limit))
+  const totalQuery = User.countDocuments({ status: true })
 
-const createUsers = (req, res = response) => {
-  const { lorem, ipsum } = req.body;
+  const [users, total] = await Promise.all([usersQuery, totalQuery])
 
-  res.json({
+  res.json({ total, users })
+}
+
+const createUsers = async (req, res = response) => {
+  const { name, email, password, role } = req.body
+  const user = new User({ name, email, password, role })
+
+  const salt = bcryptjs.genSaltSync()
+  user.password = bcryptjs.hashSync(password, salt)
+
+  await user.save()
+
+  return res.json({
     msg: 'create API',
-    lorem,
-    ipsum
-  });
-};
+    user
+  })
+}
 
-const editUsers = (req, res = response) => {
-  const { id } = req.params;
+const editUsers = async (req, res = response) => {
+  const { id } = req.params
+  const { _id, password, google, email, ...restUser } = req.body
 
-  res.json({
-    msg: 'edit API',
-    id
-  });
-};
+  if (password) {
+    const salt = bcryptjs.genSaltSync()
+    restUser.password = bcryptjs.hashSync(password, salt)
+  }
 
-const deleteUsers = (req, res = response) => {
-  res.json({
-    msg: 'delete API'
-  });
-};
+  const user = await User.findByIdAndUpdate(id, restUser, { new: true })
+
+  res.json(user)
+}
+
+const deleteUsers = async (req, res = response) => {
+  const { id } = req.params
+
+  const user = await User.findByIdAndUpdate(id, { status: false })
+
+  res.json(user)
+}
 
 module.exports = {
   getUsers,
   createUsers,
   editUsers,
   deleteUsers
-};
+}
