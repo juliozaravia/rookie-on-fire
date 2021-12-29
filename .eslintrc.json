@@ -16,6 +16,6 @@
     ],
     "rules": {
         "prettier/prettier": "error",
-        "semi": [2, "always"]
+        "semi": ["error", "never"]
     }
 }
