@@ -1,7 +1,7 @@
 const { request, response } = require('express')
 const bcryptjs = require('bcryptjs')
 
-const User = require('../models/user')
+const User = require('../models/user.model')
 
 const getUsers = async (req = request, res = response) => {
   // TODO: Validate that limit and from are transformable to numbers by Number foo
