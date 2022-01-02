@@ -34,8 +34,11 @@ const UserSchema = Schema({
 
 // eslint-disable-next-line func-names
 UserSchema.methods.toJSON = function () {
-  const { __v, password, ...restUser } = this.toObject()
-  return restUser
+  const { __v, password, _id, ...restUser } = this.toObject()
+  return {
+    uid: _id,
+    ...restUser
+  }
 }
 
 module.exports = model('User', UserSchema)
