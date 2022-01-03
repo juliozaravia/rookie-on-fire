@@ -4,10 +4,55 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Unauthorized Access</title>
+    <title>Google Sign-In</title>
   </head>
   <body>
-    <h1>Unauthorized Access</h1>
-    <p>Please contact your webmaster</p>
+    <h1>Google Sign-In</h1>
+    <hr />
+    <div
+      id="g_id_onload"
+      data-client_id="378536317670-dgvhu3n3dfbdmbpoqorn13tk3eaeiuf7.apps.googleusercontent.com"
+      data-auto_prompt="false"
+      data-callback="handleCredentialResponse"
+    ></div>
+    <div
+      class="g_id_signin"
+      data-type="standard"
+      data-size="large"
+      data-theme="outline"
+      data-text="sign_in_with"
+      data-shape="rectangular"
+      data-logo_alignment="left"
+    ></div>
+    <div>
+      <button id="google_signout">Sign Out</button>
+    </div>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+      function handleCredentialResponse(response) {
+        const body = { id_token: response.credential }
+
+        fetch('http://localhost:8080/api/auth/google', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        })
+          .then((resp) => resp.json())
+          .then((data) => {
+            localStorage.setItem('email', data.user.email)
+          })
+          .catch(console.warn)
+      }
+
+      const button = document.getElementById('google_signout')
+      button.onclick = () => {
+        google.accounts.id.revoke(localStorage.getItem('email'), (done) => {
+          localStorage.clear()
+          location.reload()
+        })
+      }
+    </script>
   </body>
 </html>
